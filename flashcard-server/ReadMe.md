@@ -4,54 +4,55 @@ This is the backend server component of the flashcard application. It provides t
 
 ## Prerequisites
 
-- Node.js and npm installed on your machine.
-- MongoDB installed and running.
+- Node.js and npm installed on your machine
+- MongoDB installed and running
 
 ## Getting Started
 
 ### Install Dependencies
 
-Before running the server, you need to install the necessary dependencies. Run the following command in the project directory:
-
 ```bash
 npm install
 ```
 
-### Run the Dev Server
+### Environment Setup
 
-To start the development server, use the following command:
+Create a `.env` file in the project root:
+
+```
+MONGO_URI=mongodb://localhost:27017/flashcard-app
+```
+
+For testing, use `.env.test`:
+
+```
+MONGO_URI=mongodb://localhost:27017/flashcards_test
+```
+
+### Run the Server
 
 ```bash
 npx nodemon index.js
 ```
 
-This command will start your server and watch for any changes to your project files, restarting the server as needed.
-
-### Environment Variables
-
-- currenty not implemented
-Create a `.env` file in the root of your project and add the necessary environment variables. For example:
-
-```
-MONGODB_URI=your_mongodb_uri
-PORT=your_port_number
-```
-
 ### API Endpoints
 
-Check running server at http://localhost:5000/ .
-
-Future endpoints:
-
-- **GET /api/flashcards**: Retrieve all flashcards.
-- **POST /api/flashcards**: Create a new flashcard.
-- **PUT /api/flashcards/:id**: Update a flashcard by ID.
-- **DELETE /api/flashcards/:id**: Delete a flashcard by ID.
+- **GET /** - Check server status
+- **GET /status** - Get detailed server status including:
+  - Server status
+  - Database connection status
+  - Current timestamp
 
 ### Testing
 
-Currently, there are no tests specified. You can add your tests in the `scripts` section of `package.json`.
+Run tests:
+
+```bash
+npm test               # Run tests once
+npm run test:watch    # Run tests in watch mode
+npm run test:coverage # Run tests with coverage
+```
 
 ## License
 
-This project is licensed under the ISC License.
+ISC

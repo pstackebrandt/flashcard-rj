@@ -1,3 +1,5 @@
+// index.js
+
 /**
  * Main server entry point for the Flashcard API
  * 
@@ -48,18 +50,31 @@ app.get('/', (req, res) => {
     res.send('Server is running...');
 });
 
-// Start Server regardless of DB connection status
-(async () => {
-    dbConnection = await connectToMongoDB();
-    if (!dbConnection) {
-        console.warn('Warning: Failed to connect to MongoDB. The server will still start, but database-dependent features will not work.');
-    }
-    
-    const PORT = process.env.PORT || 5000;
-    app.listen(PORT, () => {
-        console.log(`Server is running on port ${PORT}`);
+// Status Endpoint
+app.get('/status', (req, res) => {
+    const dbStatus = dbConnection ? 'connected' : 'not connected';
+    res.json({
+        server: 'running',
+        database: dbStatus,
+        timestamp: new Date().toLocaleString(),
     });
-})();
+});
+
+// Start Server regardless of DB connection status
+// Only start the server if we're not in test mode
+if (process.env.NODE_ENV !== 'test') {
+    (async () => {
+        dbConnection = await connectToMongoDB();
+        if (!dbConnection) {
+            console.warn('Warning: Failed to connect to MongoDB. The server will still start, but database-dependent features will not work.');
+        }
+
+        const PORT = process.env.PORT || 5000;
+        app.listen(PORT, () => {
+            console.log(`Server is running on port ${PORT}`);
+        });
+    })();
+}
 
 // Handle process termination signals to gracefully close the connection
 process.on('SIGINT', async () => {
@@ -78,3 +93,10 @@ process.on('SIGTERM', async () => {
     }
     process.exit(0);
 });
+
+// Export for testing
+module.exports = {
+    app,
+    connectToMongoDB,
+    dbConnection
+};
