@@ -1,3 +1,13 @@
+/**
+ * Main server entry point for the Flashcard API
+ * 
+ * This file sets up an Express server with MongoDB connection,
+ * configures middleware (CORS, JSON parsing), and handles
+ * graceful shutdown of database connections. The server will
+ * start even if the database connection fails, allowing for
+ * partial functionality.
+ */
+
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
