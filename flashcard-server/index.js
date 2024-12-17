@@ -27,13 +27,28 @@ async function connectToMongoDB() {
     }
 }
 
-// 
+// Create Express app
+const app = express();
+// -- Middleware
+app.use(express.json());
+app.use(cors());
+
+// Root Route
+app.get('/', (req, res) => {
+    res.send('Server is running...');
+});
+
+// Start Server regardless of DB connection status
 (async () => {
     dbConnection = await connectToMongoDB();
     if (!dbConnection) {
-        console.error('Exiting application due to failed database connection.');
-        process.exit(1); // Exit the process with a non-zero status code
+        console.warn('Warning: Failed to connect to MongoDB. The server will still start, but database-dependent features will not work.');
     }
+    
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+    });
 })();
 
 // Handle process termination signals to gracefully close the connection
@@ -52,21 +67,4 @@ process.on('SIGTERM', async () => {
         await mongoose.disconnect();
     }
     process.exit(0);
-});
-
-// Create Express app
-const app = express();
-// -- Middleware
-app.use(express.json());
-app.use(cors());
-
-// Root Route
-app.get('/', (req, res) => {
-    res.send('Server is running...');
-});
-
-// Start Server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
 });
